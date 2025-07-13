@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/Resource">
+        <file>font/flache.ttf</file>
+	    <file>ico/user.png</file>
+	    <file>ico/friend_edit_sel.png</file>
+	    <file>ico/logo.svg</file>
+	    <file>ico/file_sel.png</file>
+	    <file>ico/file_unsel.png</file>
+	    <file>ico/ai_boot.png</file>
+    </qresource>
+</RCC>

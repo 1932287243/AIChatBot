@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
 	chat_page.setWindowOpacity(0.96);
 	chat_page.CreateChatWindow(user_data);
 	chat_page.show();
+	chat_page.setCurrentChatWindow(user_data);
+	// chat_page.setMinimumSize(1440, 960);
 	QObject::connect(&client, &SocketClient::msgFromAI, &chat_page, &ChatPage::receiveAIMsg);
 	QObject::connect(&chat_page, &ChatPage::SendUserMessage, &client, &SocketClient::userMsg);
 

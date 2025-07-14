@@ -52,7 +52,6 @@ private:
 	ImageViewer* image_viewer = Q_NULLPTR;
 	QFrame* line;
 	QFrame* line2;
-	// EmojiViewer* emoji_viewer = Q_NULLPTR;
 private:
 	void setupFrameStyle(QFrame* frame);
 	

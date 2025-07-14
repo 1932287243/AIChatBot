@@ -44,25 +44,24 @@ def handle_client(conn, addr):
             # # 调用 LLM 模型生成
             # cont = llm_model.generate(text)
             # time.sleep(0.1) 
-            full_cont = """void ChatWindow::IncreaseMessageItem(const UserData& user_data)dsassssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-{
-	QListWidgetItem* item = new QListWidgetItem(this->chat_list);
-	item->setFlags(item->flags() & ~Qt::ItemIsSelectable);"""
-            i = 0
+            # full_cont = """sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"""
+            full_cont = """dsajkl"""
+            # i = 0
             for c in full_cont:
-                if c != '\n':
-                    i+=1
-                else:
-                    i=0
-                    print("+++++++++")
-                if i==100:
-                    print("---------")
-                    conn.sendall(f"\n".encode('utf-8'))
-                    i = 0
+                # if c != '\n':
+                #     i+=1
+                # else:
+                #     i=0
+                #     print("+++++++++")
+                # if i==100:
+                #     print("---------")
+                #     conn.sendall(f"\n".encode('utf-8'))
+                #     i = 0
                 # full_cont += c
                 time.sleep(0.1)
                 # 发送结果回客户端
                 conn.sendall(c.encode('utf-8'))
+            time.sleep(0.1)
             end = '0xa8a8a8a8'
             conn.sendall(end.encode('utf-8'))  # start
     finally:

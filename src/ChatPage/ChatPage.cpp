@@ -3,6 +3,8 @@
 ChatPage::ChatPage(QWidget* parent)
 	: QWidget(parent)
 {
+
+	this->setMinimumSize(1440, 960);
 	this->showMaximized();
 
 	// this->setAttribute(Qt::WA_TranslucentBackground);
@@ -103,14 +105,14 @@ void ChatPage::CreateChatWindow(UserData& user_data)
 void ChatPage::receiveAIMsg(const QString& msg){
 	bool first_flag = false;
 	if(msg == "0x8a8a8a8a"){
-		qDebug() << "start";
+		// qDebug() << "start";
 		user_data.userMessage = "";
 		ai_flag = true;
 		first_flag = true;
 	}
 
 	if(msg == "0xa8a8a8a8"){
-		qDebug() << "end";
+		// qDebug() << "end";
 		ai_flag = false;
 		user_data.userMessage = "我是AI助手，很高兴见到你！";
 		return;
@@ -157,10 +159,12 @@ void ChatPage::CreateChatWindow1()
 	}
 	user_data.isUnread = true;
 	user_data.unReadMessageNums++;
+
 	item->setData(Qt::UserRole, QVariant::fromValue(user_data));
 	this->ChatItemAndChatWindow.insert(item, chat_window);
 	this->friendChat_list->increaseFriendItem(item);
 	this->stack_layout->addWidget(chat_window);
+	
 	for (int i = 1; i < this->stack_layout->count(); i++) {
 		chat_window = qobject_cast<ChatWindow*>(this->stack_layout->widget(i));
 		if (chat_window) {
@@ -170,6 +174,7 @@ void ChatPage::CreateChatWindow1()
 			}
 		}
 	}
+	this->stack_layout->setCurrentIndex(user_data.index);
 	connect(chat_window, &ChatWindow::SendUserMessage, this, &ChatPage::SendUserMessage, Qt::DirectConnection);
 	connect(chat_window, &ChatWindow::SendUserMessageForUserFileSignal, this, &ChatPage::SendUserMessageForUserFileSignal, Qt::DirectConnection);
 	connect(this, &ChatPage::setFileItemProgressSignal, chat_window, &ChatWindow::setUploadFileItemProgress, Qt::DirectConnection);

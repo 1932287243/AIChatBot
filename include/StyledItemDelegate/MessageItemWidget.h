@@ -17,6 +17,7 @@
 #include <QGraphicsDropShadowEffect>
 // #include  "../../FramelessWindow/include/framelesswindow.h"
 #include "Component/ImageViewer.h"
+#include <QFontMetrics>
 #include "global.h"
 
 QT_BEGIN_NAMESPACE
@@ -74,6 +75,7 @@ private:
 	QRect border_rect;
 	ImageContainer* image = Q_NULLPTR;
 	UserData user_data;
+	int maxWidth = 800;  // 设置最大宽度
 Q_SIGNALS:
 	void showImageViewer(const QString& image_path);
 };

@@ -1,4 +1,5 @@
 import socket
+import time
 
 def handle_client(conn, addr, llm_model):
     print(f"Connected by {addr}")
@@ -22,7 +23,7 @@ def handle_client(conn, addr, llm_model):
                 full_cont += c
                 # 发送结果回客户端
                 conn.sendall(c.encode('utf-8'))
-
+            time.sleep(0.1)
             end = '0xa8a8a8a8'
             conn.sendall(end.encode('utf-8'))  # start
     finally:
@@ -34,7 +35,7 @@ def main():
     llm_model = LlmModel('deepseek-r1-1.5b')
 
     HOST = '127.0.0.1'
-    PORT = 8889 
+    PORT = 8888 
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))

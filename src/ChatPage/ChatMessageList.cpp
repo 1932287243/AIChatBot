@@ -1,10 +1,9 @@
-﻿#include "ChatPage/FriendChatList.h"
+﻿#include "ChatPage/ChatMessageList.h"
 #include <QShortcut>
 
-FriendChatList::FriendChatList(QWidget* parent)
+ChatMessageList::ChatMessageList(QWidget* parent)
 	: QWidget(parent)
 {
-	// this->setFixedWidth(300);
 	this->setMaximumWidth(500);
 
 	QVBoxLayout* main_vbox = new QVBoxLayout(this);
@@ -12,32 +11,38 @@ FriendChatList::FriendChatList(QWidget* parent)
 
 	QFont font;
 	font.setBold(true);
-	font.setPixelSize(20);
+	font.setPixelSize(30);
 	QPalette pale;
 	pale.setColor(QPalette::WindowText, Qt::black);
 
-	QHBoxLayout* lay = new QHBoxLayout;
+	QWidget *titleBar = new QWidget(this);  // 创建容器
 
-	this->title = new QLabel("Message", this);
+	// 创建布局（水平排列）
+	QHBoxLayout *layout = new QHBoxLayout(titleBar);
+	layout->setContentsMargins(0, 0, 0, 0);  // 去除边距（可选）
+
+	// 左边的 QLabel
+	this->title = new QLabel("Message", titleBar);
 	this->title->setFont(font);
 	this->title->setPalette(pale);
-	this->title->setAlignment(Qt::AlignCenter);
+	this->title->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);  // 垂直居中，左对齐
 
-	this->edit = new QLabel(this);
-	this->edit->setFixedSize(15, 15);
-	this->edit->setCursor(Qt::PointingHandCursor);
-	this->edit->setScaledContents(true);
-	QPixmap pixmap(":/Resource/ico/friend_edit_sel.png");
-	this->edit->setPixmap(pixmap);
+	// 右边的带图标按钮
+	QPushButton *iconButton = new QPushButton(titleBar);
+	iconButton->setIcon(QIcon(":/Resource/ico/close_sidebar.png"));  
+	iconButton->setFixedSize(36, 36);                     // 设置按钮大小
+	iconButton->setFlat(true);                            // 无边框风格（可选）
+	iconButton->setIconSize(QSize(30, 30));  // 设置图标大小为 16x16 像素
 
-	lay->addWidget(this->title);
-	// lay->addStretch();
-	// lay->addWidget(this->edit);
+	// 添加到布局
+	layout->addWidget(this->title);
+	layout->addStretch();            // 自动将按钮推到右边
+	layout->addWidget(iconButton);
 
 	new_session = new QPushButton(this);
-	new_session->setText("New Session");
-	// new_session->setIcon(QIcon(":/Resource/ico/friend_edit_sel.png"));
-	// new_session->setIconSize(QSize(16, 16));  // 控制图标大小
+	new_session->setText("开启新对话");
+	new_session->setIcon(QIcon(":/Resource/ico/new_session.png"));
+	new_session->setIconSize(QSize(30, 30));  // 控制图标大小
 	new_session->setFont(font);
 	// 设置无边框样式（可选）
 	new_session->setStyleSheet("QPushButton { border: none; background-color: transparent; }");
@@ -48,13 +53,13 @@ FriendChatList::FriendChatList(QWidget* parent)
 	QHBoxLayout* newSessionLayout = new QHBoxLayout;
 	newSessionLayout->addWidget(new_session);           // 添加按钮
 	newSessionLayout->addStretch();                     // 在右侧添加伸缩空间，将按钮推到最左边
-	newSessionLayout->addWidget(this->edit);
 	newSessionLayout->setContentsMargins(0, 0, 0, 0);    // 可选：去除边距
 
 	// 设置快捷键（Ctrl+N）
 	QShortcut* shortcut = new QShortcut(QKeySequence("Ctrl+N"), this);
 	connect(shortcut, &QShortcut::activated, new_session, &QPushButton::click);
-	connect(new_session, &QPushButton::clicked, this, &FriendChatList::sendCreateNewSession);
+	connect(new_session, &QPushButton::clicked, this, &ChatMessageList::sendCreateNewSession);
+	connect(iconButton, &QPushButton::clicked, this,  &ChatMessageList::sendCloseMeassageList);
 
 	pale.setColor(QPalette::Window, Qt::transparent);
 	this->chat_listWidget = new QListWidget(this);
@@ -65,20 +70,20 @@ FriendChatList::FriendChatList(QWidget* parent)
 	FriendChatDelegate* delegate = new  FriendChatDelegate(this);
 	this->chat_listWidget->setItemDelegate(delegate);
 
-	main_vbox->addLayout(lay);
+	main_vbox->addWidget(titleBar);
 	main_vbox->addSpacing(8);
 	main_vbox->addLayout(newSessionLayout);
 	main_vbox->addSpacing(8);
 	main_vbox->addWidget(this->chat_listWidget);
 
-	connect(this->chat_listWidget, &QListWidget::itemClicked, this, &FriendChatList::dealItemClicked, Qt::DirectConnection);
+	connect(this->chat_listWidget, &QListWidget::itemClicked, this, &ChatMessageList::dealItemClicked, Qt::DirectConnection);
 }
 
-FriendChatList::~FriendChatList()
+ChatMessageList::~ChatMessageList()
 {
 }
 
-void FriendChatList::increaseFriendItem(ListWidgetItem* item)
+void ChatMessageList::increaseFriendItem(ListWidgetItem* item)
 {
 	//	ListWidgetItem* my_item = qobject_cast<ListWidgetItem*>(item);
 		//my_item->setData(Qt::UserRole, QVariant::fromValue(item->data(Qt::UserRole).value<UserData>()));
@@ -86,7 +91,7 @@ void FriendChatList::increaseFriendItem(ListWidgetItem* item)
 	this->chat_listWidget->sortItems(Qt::DescendingOrder);
 }
 
-int FriendChatList::isExistFriendChatItem(const QString& account)
+int ChatMessageList::isExistFriendChatItem(const QString& account)
 {
 	for (int i = 0; i < this->chat_listWidget->count(); i++) {
 		QListWidgetItem* item = this->chat_listWidget->item(i);
@@ -98,7 +103,7 @@ int FriendChatList::isExistFriendChatItem(const QString& account)
 	return -1;
 }
 
-void FriendChatList::setItemSelected(const QString& account)
+void ChatMessageList::setItemSelected(const QString& account)
 {
 	for (int i = 0; i < this->chat_listWidget->count(); i++) {
 		QListWidgetItem* item = this->chat_listWidget->item(i);
@@ -111,7 +116,7 @@ void FriendChatList::setItemSelected(const QString& account)
 	;
 }
 
-void FriendChatList::setItemData(int index, const UserData& user_data)
+void ChatMessageList::setItemData(int index, const UserData& user_data)
 {
 	QListWidgetItem* item = this->chat_listWidget->item(index);
 	UserData item_data = item->data(Qt::UserRole).value<UserData>();
@@ -128,7 +133,7 @@ void FriendChatList::setItemData(int index, const UserData& user_data)
 	item->setData(Qt::UserRole, QVariant::fromValue(item_data));
 }
 
-void FriendChatList::dealItemClicked(QListWidgetItem* item)
+void ChatMessageList::dealItemClicked(QListWidgetItem* item)
 {
 	UserData user_data = item->data(Qt::UserRole).value<UserData>();
 	if (user_data.unReadMessageNums != 0) {
@@ -139,13 +144,13 @@ void FriendChatList::dealItemClicked(QListWidgetItem* item)
 	emit this->FriendChatItemChanged(user_data);
 }
 
-UserData FriendChatList::getItemData(int index) const
+UserData ChatMessageList::getItemData(int index) const
 {
 	UserData  user_data = this->chat_listWidget->item(index)->data(Qt::UserRole).value<UserData>();
 	return user_data;
 }
 
-void FriendChatList::paintEvent(QPaintEvent*)
+void ChatMessageList::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);

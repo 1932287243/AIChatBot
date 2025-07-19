@@ -12,13 +12,13 @@
 #include "Component/RoundImage.h"
 
 class ListWidgetItem;
-class FriendChatList : public QWidget
+class ChatMessageList : public QWidget
 {
 	Q_OBJECT
 
 public:
-	FriendChatList(QWidget* parent);
-	~FriendChatList();
+	ChatMessageList(QWidget* parent);
+	~ChatMessageList();
 public:
 	void increaseFriendItem(ListWidgetItem* item);
 	int isExistFriendChatItem(const QString& account);
@@ -36,6 +36,7 @@ private:
 signals:
 	void FriendChatItemChanged(const UserData& user_ata);
 	void sendCreateNewSession();
+	void sendCloseMeassageList();
 };
 
 class ListWidgetItem :public QListWidgetItem {

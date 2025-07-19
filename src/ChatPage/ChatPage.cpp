@@ -1,21 +1,9 @@
 ﻿#include "ChatPage/ChatPage.h"
 
+
 ChatPage::ChatPage(QWidget* parent)
 	: QWidget(parent)
 {
-
-	this->setMinimumSize(1440, 960);
-	this->showMaximized();
-
-	// this->setAttribute(Qt::WA_TranslucentBackground);
-    // this->setAutoFillBackground(false);
-
-	// this->setStyleSheet(R"(
-	// 	QWidget {
-	// 		background-color: rgba(211, 211, 211, 0);
-	// 	}
-	// )");
-
 	GLOB_ScaleDpi = this->devicePixelRatioF();
 	QPixmap pixmap;
 	if (!pixmap.load(":/Resource/ico/ai_boot.png")) {
@@ -29,7 +17,7 @@ ChatPage::ChatPage(QWidget* parent)
 	user_data.status = false;
 	user_data.status_ico = pixmap;
 	user_data.status_text = "hello";
-	user_data.userMessage = "我是AI助手，很高兴见到你！";
+	user_data.userMessage = "我是重庆大学领域专用芯片及智能系统实验室的小虫子，很高兴见到你！";
 	user_data.index = 1;
 
 	QHBoxLayout* main_lay = new QHBoxLayout(this);
@@ -37,18 +25,46 @@ ChatPage::ChatPage(QWidget* parent)
 	
 	this->setLayout(main_lay);
 
-	this->friendChat_list = new FriendChatList(this);
+	this->friendChat_list = new ChatMessageList(this);
 	this->default_window = new DefaultWindow(this);
+
+	QWidget *stackedContainer = new QWidget;
 	this->stack_layout = new QStackedLayout;
+	this->stack_layout->setContentsMargins(250, 0, 250, 0);
 	this->stack_layout->addWidget(this->default_window);
-	main_lay->addWidget(this->friendChat_list, 1);
-	main_lay->addLayout(this->stack_layout, 4);
-	connect(this->friendChat_list, &FriendChatList::FriendChatItemChanged, this, &ChatPage::setCurrentChatWindow, Qt::DirectConnection);
-	connect(this->friendChat_list, &FriendChatList::sendCreateNewSession, this, &ChatPage::CreateChatWindow1, Qt::DirectConnection);
+	stackedContainer->setLayout(this->stack_layout);
+
+	// main_lay->addLayout(this->stack_layout, 4);
+
+	S_FriendPageWindow = new QSplitter(Qt::Horizontal, this);
+	S_FriendPageWindow->setHandleWidth(1);
+
+	S_FriendPageWindow->addWidget(this->friendChat_list);
+	S_FriendPageWindow->addWidget(stackedContainer);
+
+	S_FriendPageWindow->setSizes({0, INT_MAX}); 
+	initialSizes = S_FriendPageWindow->sizes();
+
+	main_lay->addWidget(S_FriendPageWindow);
+
+	connect(this->friendChat_list, &ChatMessageList::FriendChatItemChanged, this, &ChatPage::setCurrentChatWindow, Qt::DirectConnection);
+	connect(this->friendChat_list, &ChatMessageList::sendCreateNewSession, this, &ChatPage::CreateChatWindow1, Qt::DirectConnection);
+	connect(this->friendChat_list, &ChatMessageList::sendCloseMeassageList, [&](){
+		S_FriendPageWindow->setSizes({0, INT_MAX}); 
+	});
 }
 
 ChatPage::~ChatPage()
 {
+}
+
+void ChatPage::receiveSidebarIndex(int index){
+	if(index == 1){
+		S_FriendPageWindow->setSizes(QList<int>() << 300 << 1000);
+	}
+	if(index == 2){
+		CreateChatWindow1();
+	}
 }
 
 /**
@@ -114,7 +130,7 @@ void ChatPage::receiveAIMsg(const QString& msg){
 	if(msg == "0xa8a8a8a8"){
 		// qDebug() << "end";
 		ai_flag = false;
-		user_data.userMessage = "我是AI助手，很高兴见到你！";
+		user_data.userMessage = "我是重庆大学领域专用芯片及智能系统实验室的小虫子，很高兴见到你！";
 		return;
 	}
 

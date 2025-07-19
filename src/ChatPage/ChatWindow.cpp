@@ -231,14 +231,14 @@ ChatTitle::ChatTitle(const QString& user_name, const QPixmap& user_head, QWidget
 	QHBoxLayout* main_lay = new QHBoxLayout(this);
 	this->setLayout(main_lay);
 
-	//this->shadow = new QGraphicsDropShadowEffect(this);
-	//this->shadow->setOffset(0, 0);
-	//this->shadow->setColor(Qt::gray);
-	//this->shadow->setBlurRadius(8);
-	//this->setGraphicsEffect(this->shadow);
+	this->shadow = new QGraphicsDropShadowEffect(this);
+	this->shadow->setOffset(0, 0);
+	this->shadow->setColor(Qt::gray);
+	this->shadow->setBlurRadius(8);
+	this->setGraphicsEffect(this->shadow);
 
 	// QPixmap pixmap;
-	// if (!pixmap.load(":/Resource/ico/file_sel.png")) {
+	// if (!pixmap.load(":/Resource/ico/close_sidebar.png")) {
 	// 	qWarning("Failed to load image");
 	// 	// return {};
 	// }
@@ -381,23 +381,7 @@ bool ChatMessageEdit::eventFilter(QObject* target, QEvent* event)
 			}
 		}
 	}
-	// if(target == this->send_button){
-	// 	if (event->type() == QEvent::HoverEnter) {
-		
-	// 		return true;
-	// 	}
-	// 	if (event->type() == QEvent::HoverLeave) {
-			
-	// 		return true;
-	// 	}
-	// 	if (event->type() == QEvent::MouseButtonPress) {
-			
-	// 			emit this->MyMessageForFileSignal(data);
-	// 		}
 
-	// 		return true;
-	// 	}
-	// }
 	if (target == this->file_button) {
 		if (event->type() == QEvent::HoverEnter) {
 			pixmap.load(":/Resource/ico/file_sel.png");
@@ -430,22 +414,22 @@ bool ChatMessageEdit::eventFilter(QObject* target, QEvent* event)
 			return true;
 		}
 	}
-	if (target == this->emoji_button) {
-		if (event->type() == QEvent::HoverEnter) {
-			pixmap.load(":/Resource/ico/emoji_sel.png");
-			this->emoji_button->setPixmap(pixmap);
-			return true;
-		}
-		if (event->type() == QEvent::HoverLeave) {
-			pixmap.load(":/Resource/ico/emoji_unsel.png");
-			this->emoji_button->setPixmap(pixmap);
-			return true;
-		}
-		if (event->type() == QEvent::MouseButtonPress) {
-			emit this->showImageViewSignal();
-			return true;
-		}
-	}
+	// if (target == this->emoji_button) {
+	// 	if (event->type() == QEvent::HoverEnter) {
+	// 		pixmap.load(":/Resource/ico/emoji_sel.png");
+	// 		this->emoji_button->setPixmap(pixmap);
+	// 		return true;
+	// 	}
+	// 	if (event->type() == QEvent::HoverLeave) {
+	// 		pixmap.load(":/Resource/ico/emoji_unsel.png");
+	// 		this->emoji_button->setPixmap(pixmap);
+	// 		return true;
+	// 	}
+	// 	if (event->type() == QEvent::MouseButtonPress) {
+	// 		emit this->showImageViewSignal();
+	// 		return true;
+	// 	}
+	// }
 	if (target == this->waitTransferFile_button) {
 		if (event->type() == QEvent::HoverEnter) {
 			pixmap.load(":/Resource/ico/wait_trans_sel.png");
@@ -465,23 +449,23 @@ bool ChatMessageEdit::eventFilter(QObject* target, QEvent* event)
 	return QWidget::eventFilter(target, event);
 }
 
-void ChatMessageEdit::addEmoji(const QString& image_path)
-{
-	QTextCursor cursor = this->message_edit->textCursor();
+// void ChatMessageEdit::addEmoji(const QString& image_path)
+// {
+// 	QTextCursor cursor = this->message_edit->textCursor();
 
-	// 加载图片
-	QFont font;
-	font.setPixelSize(13);
-	QTextImageFormat imageFormat;
-	imageFormat.setFont(font);
-	imageFormat.setWidth(20);
-	imageFormat.setHeight(20);
-	imageFormat.setName(image_path);
+// 	// 加载图片
+// 	QFont font;
+// 	font.setPixelSize(13);
+// 	QTextImageFormat imageFormat;
+// 	imageFormat.setFont(font);
+// 	imageFormat.setWidth(20);
+// 	imageFormat.setHeight(20);
+// 	imageFormat.setName(image_path);
 
-	// 插入图片到光标位置
-	cursor.insertImage(imageFormat);
-	message_edit->setTextCursor(cursor);
-}
+// 	// 插入图片到光标位置
+// 	cursor.insertImage(imageFormat);
+// 	message_edit->setTextCursor(cursor);
+// }
 
 SendMessageButton::SendMessageButton(QWidget* parent) :QWidget(parent)
 {
@@ -491,12 +475,10 @@ SendMessageButton::SendMessageButton(QWidget* parent) :QWidget(parent)
 
 void SendMessageButton::paintEvent(QPaintEvent*)
 {
-	qDebug() << "paintEvent111";
 	QPainter painter(this);
 	painter.save();
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 	painter.setPen(Qt::NoPen);
-	// painter.setBrush(QColor::fromString("#6a4cff"));
 	painter.setBrush(QColor("#6a4cff"));
 	painter.drawRoundedRect(this->rect(), 10, 10);
 	painter.restore();

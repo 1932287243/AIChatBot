@@ -1,4 +1,5 @@
 ﻿#include "StyledItemDelegate/MessageItemWidget.h"
+#include "markdownhighlighter.h"
 // #include <QScreen>
 
 MessageItemWidget::MessageItemWidget(const UserData& userdata, QWidget* parent)
@@ -133,28 +134,30 @@ Bubble::Bubble(const UserData& user_data, QWidget* parent) :QWidget(parent)
 		QHBoxLayout* main_lay = new QHBoxLayout(this);
 		main_lay->setContentsMargins(2, 2, 2, 2);
 		this->setLayout(main_lay);
-		this->text = new QLabel(user_data.userMessage, this);
-		// this->text->setAutoFillBackground(true);
-		// this->text->setMaximumWidth(800);
-		// this->text->setFixedWidth(maxWidth);
+	
+		this->text = new QTextEdit( this);
+		this->text->setFrameStyle(QFrame::NoFrame);
+		this->text->setReadOnly(true);
+
 		this->text->setFont(font);
-		// metrics = new QFontMetrics(((this->font())));
-		this->text->setPalette(pale);
-		// this->text->adjustSize();
-		// this->text->setWordWrap(true);  // 启用自动换行
-		this->text->setTextInteractionFlags(Qt::TextSelectableByMouse);
+		this->text->setPlainText(user_data.userMessage);
+		// 设置语法高亮器
+    	new MarkdownHighlighter(this->text->document());
+		
+		QFontMetrics metrics(this->text->font());
+	
 		this->text->setStyleSheet("background-color: rgba(255, 255, 255, 0);");  
-		//this->text->setSelection(Qt::);
-		this->text->adjustSize();                       // 设置完后再自动计算高度
-		this->setFixedSize(text->width() + 20, text->height() + 10);
-
+		
 		// 计算文字的换行后高度
-		// int textHeight = metrics->boundingRect(QRect(0, 0, maxWidth, 1000), Qt::TextWordWrap, content).height();
-		// this->text->setFixedHeight(textHeight);
+		QString content = user_data.userMessage;
+		int textHeight = metrics.boundingRect(QRect(0, 0, maxWidth, 1000), Qt::TextWordWrap, content).height();
+		int textWidth = metrics.boundingRect(QRect(0, 0, maxWidth, 1000), Qt::TextWordWrap, content).width();
+		this->text->setFixedSize(textWidth + 20, textHeight + 10);
+		
+		this->text->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);  // 不显示滚动条
+		this->text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-		// 最后，调整整个 Widget 的大小，给文字留边距
-		// this->setFixedSize(this->text->width() + 20, this->text->height() + 10);
-
+		this->setFixedSize(text->width() + 20, text->height() + 10);
 		main_lay->addWidget(this->text, 0, Qt::AlignCenter);
 		this->border_rect = this->rect().adjusted(2, 2, -2, -2);
 	}
@@ -229,7 +232,7 @@ Bubble::Bubble(const UserData& user_data, QWidget* parent) :QWidget(parent)
 Bubble::~Bubble()
 {
 }
-#include <QDebug>
+
 void Bubble::updateFromUserData(UserData& new_data)
 {
     this->user_data = new_data;
@@ -247,11 +250,23 @@ void Bubble::updateFromUserData(UserData& new_data)
 		int textWidth = metrics.boundingRect(QRect(0, 0, maxWidth, 1000), Qt::TextWordWrap, content).width();
 		
 		if(textWidth > maxWidth){
-			int insertPos = content.length() - 1;  // 倒数第二个字符之后的位置
-			new_data.userMessage.insert(insertPos, '\n');
+		// 	int insertPos = content.length() - 1;  // 倒数第二个字符之后的位置
+		// 	new_data.userMessage.insert(insertPos, '\n');
+			// 找到最后一个空格的位置
+			int lastSpace = content.lastIndexOf(' ');
+			// 如果找到了，就插入换行符
+			if (lastSpace != -1) {
+				new_data.userMessage.insert(lastSpace + 1, '\n');
+			}
+			else{
+				int insertPos = content.length() - 1;  // 倒数第二个字符之后的位置
+				new_data.userMessage.insert(insertPos, '\n');
+			}
+
 		}
-		this->text->setText(content);
-		this->text->adjustSize();
+		this->text->setFixedSize(textWidth + 20, textHeight + 10);
+		this->text->setPlainText(content);
+		// this->text->adjustSize();
 
 		// 最后，调整整个 Widget 的大小，给文字留边距
 		this->setFixedSize(this->text->width() + 20, this->text->height() + 10);
@@ -286,7 +301,8 @@ void Bubble::paintEvent(QPaintEvent*)
 		painter.setRenderHint(QPainter::Antialiasing);
 		painter.setPen(Qt::NoPen);
 		// painter.setBrush(QColor("#0099ff"));
-		QColor semiTransparentBlue(0, 153, 255, 128);  // 半透明蓝色
+		// QColor semiTransparentBlue(0, 153, 255, 128);  // 半透明蓝色
+		QColor semiTransparentBlue(255, 255, 255, 0);  // 半透明蓝色
 		painter.setBrush(semiTransparentBlue);
 
 		QRect currentRect = this->rect().adjusted(2, 2, -2, -2);

@@ -15,8 +15,8 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QGraphicsDropShadowEffect>
-// #include  "../../FramelessWindow/include/framelesswindow.h"
 #include "Component/ImageViewer.h"
+#include <QTextEdit>
 #include <QFontMetrics>
 #include "global.h"
 
@@ -66,7 +66,7 @@ protected:
 	void showEvent(QShowEvent* event)Q_DECL_OVERRIDE;
 	void mouseDoubleClickEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
 private:
-	QLabel* text = Q_NULLPTR;
+	QTextEdit* text = Q_NULLPTR;
 	QLabel* fileIco = Q_NULLPTR;
 	QLabel* fileName = Q_NULLPTR;
 	QLabel* fileSize = Q_NULLPTR;

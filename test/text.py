@@ -44,8 +44,7 @@ def handle_client(conn, addr):
             # # 调用 LLM 模型生成
             # cont = llm_model.generate(text)
             # time.sleep(0.1) 
-            # full_cont = """sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"""
-            full_cont = """dsajkl"""
+            full_cont = """ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"""
             # i = 0
             for c in full_cont:
                 # if c != '\n':

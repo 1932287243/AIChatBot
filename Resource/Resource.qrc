@@ -7,5 +7,8 @@
 	    <file>ico/file_sel.png</file>
 	    <file>ico/file_unsel.png</file>
 	    <file>ico/ai_boot.png</file>
+	    <file>ico/new_session.png</file>
+	    <file>ico/open_sidebar.png</file>
+	    <file>ico/close_sidebar.png</file>
     </qresource>
 </RCC>

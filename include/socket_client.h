@@ -1,5 +1,4 @@
-#ifndef SOCKET_CLIENT_H
-#define SOCKET_CLIENT_H
+#pragma once
 
 #include <QObject>
 #include <QTcpSocket>
@@ -30,4 +29,3 @@ signals:
 
 };
 
-#endif // SOCKET_CLIENT_H

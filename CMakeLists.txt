@@ -10,6 +10,56 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# needed for windows
+if(WIN32)
+    set(INTL_LDFLAGS -lintl)
+endif(WIN32)
+
+set(QMarkdownTextEditPath 3rdparty/qmarkdowntextedit)
+# QMarkdownTextEdit library
+set(RC_FILES
+    ${QMarkdownTextEditPath}/media.qrc
+)
+
+# Translations arent loaded so don't include them
+set(TS_FILES
+    ${QMarkdownTextEditPath}/trans/qmarkdowntextedit_de.ts
+    ${QMarkdownTextEditPath}/trans/qmarkdowntextedit_ur.ts
+    ${QMarkdownTextEditPath}/trans/qmarkdowntextedit_zh_CN.ts
+)
+
+set(QMARKDOWNTEXTEDIT_SOURCES
+    ${RC_FILES}
+    ${QMarkdownTextEditPath}/linenumberarea.h # We need to keep this here, otherwise the build fails
+    ${QMarkdownTextEditPath}/markdownhighlighter.cpp
+    ${QMarkdownTextEditPath}/qmarkdowntextedit.cpp
+    ${QMarkdownTextEditPath}/qownlanguagedata.cpp
+    ${QMarkdownTextEditPath}/qownlanguagedata.h
+    ${QMarkdownTextEditPath}/qplaintexteditsearchwidget.cpp
+    ${QMarkdownTextEditPath}/qplaintexteditsearchwidget.ui
+)
+set(QMARKDOWNTEXTEDIT_HEADERS
+    ${QMarkdownTextEditPath}/markdownhighlighter.h
+    ${QMarkdownTextEditPath}/qmarkdowntextedit.h
+    ${QMarkdownTextEditPath}/qplaintexteditsearchwidget.h
+)
+
+add_library(qmarkdowntextedit ${QMARKDOWNTEXTEDIT_SOURCES})
+set_target_properties(qmarkdowntextedit PROPERTIES
+    PUBLIC_HEADER "${QMARKDOWNTEXTEDIT_HEADERS}"
+)
+
+target_link_libraries(qmarkdowntextedit PUBLIC
+    Qt${QT_VERSION_MAJOR}::Widgets
+    ${INTL_LDFLAGS}
+)
+
+if (Qt${QT_VERSION_MAJOR}Quick_FOUND)
+    target_link_libraries(qmarkdowntextedit PUBLIC Qt${QT_VERSION_MAJOR}::Quick)
+    # add_executable(QtQuickExample examples/qml/example.cpp examples/qml/ressources.qrc)
+    # target_link_libraries(QtQuickExample PRIVATE Qt${QT_VERSION_MAJOR}::Quick qmarkdowntextedit)
+endif()
+
 # 查找所有头文件和源文件
 FILE(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/include/*.h)
 FILE(GLOB_RECURSE COMPONENT_HEADER_FILES ${PROJECT_SOURCE_DIR}/include/Component/*.h)
@@ -42,7 +92,8 @@ set(PROJECT_SOURCES
 # 添加可执行程序
 add_executable(AIChatBot ${PROJECT_SOURCES})
 
-target_include_directories(AIChatBot PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(AIChatBot PRIVATE ${PROJECT_SOURCE_DIR}/include
+                                             ${PROJECT_SOURCE_DIR}/3rdparty/qmarkdowntextedit)
 
 # 设置输出文件名
 set_target_properties(AIChatBot PROPERTIES
@@ -54,6 +105,7 @@ target_link_libraries(AIChatBot
     PUBLIC
         Qt5::Core
         Qt5::Gui
-        Qt5::Widgets
+        # Qt5::Widgets
         Qt5::Network
+        qmarkdowntextedit
 )
